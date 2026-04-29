@@ -17,4 +17,11 @@
 	(xmodekey 't "xterm")
 )
 
+; each key in the sequence is equivalent to a key passed to xbindkey, so
+; chords can be lists (if you're the kind of maniac who wants to enter a
+; sequence of chords)
+(define (bindmodesequences)
+	(xmodseq '(o t) "rxvt")
+)
+
 (load "/home/drew/Documents/xmodekeys/xmodekeys.scm")
