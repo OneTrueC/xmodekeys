@@ -1,37 +1,25 @@
 ; This is my terrible recursive modality engine "xmodekeys"
 ; Copyright 2026 Andrew Charles Marino Under MIT License
 
-(define (xregkey key command)
+(define (xregkey key funcmand)
 	(xbindkey-function key
 		(lambda ()
-			(run-command command)
+			(if (string? funcmand)
+				(run-command funcmand)
+				(funcmand)
+			)
 			(set! ACTED #t)
 		)
 	)
 )
 
-(define (xregkey-func key func)
+(define (xmodekey key funcmand)
 	(xbindkey-function key
 		(lambda ()
-			(func)
-			(set! ACTED #t)
-		)
-	)
-)
-
-(define (xmodekey key command)
-	(xbindkey-function key
-		(lambda ()
-			(run-command command)
-			(regmode)
-		)
-	)
-)
-
-(define (xmodekey-func key func)
-	(xbindkey-function key
-		(lambda ()
-			(func)
+			(if (string? funcmand)
+				(run-command funcmand)
+				(funcmand)
+			)
 			(regmode)
 		)
 	)
@@ -115,6 +103,10 @@
 			(remove-all-keys)
 			(ungrab-all-keys)
 
+			; no clue why i have to do this but it doesn't work right if
+			; either is missing, feeling inclined to chock it up to
+			; xbindkeys being a little funky with presses and releases
+			; of modkeys
 			(xbindkey-function RELEASE go-back)
 			(xbindkey-function (cons 'Release PRESS) go-back)
 
