@@ -13,18 +13,6 @@
 	)
 )
 
-(define (xmodekey key funcmand)
-	(xbindkey-function key
-		(lambda ()
-			(if (string? funcmand)
-				(run-command funcmand)
-				(funcmand)
-			)
-			(regmode)
-		)
-	)
-)
-
 (define (xmodeseq keys command)
 	(set! ALLSEQ (append ALLSEQ (list (cons keys command))))
 	(for-each
@@ -113,21 +101,16 @@
 			(set! INPSEQ '())
 			(register-keys)
 
-
-			(if (defined? 'bindmodekeys)
-				(bindmodekeys)
-			)
-
 			(grab-all-keys)
 		)
 	)
 )
 
 (define ACTED #f)
+(define GOINGBACK #f)
 (define INPSEQ '())
 (define ALLSEQ '())
 (define ALLKEY '())
-(define GOINGBACK #f)
 
 (if (defined? 'bindmodesequences)
 	(bindmodesequences)
