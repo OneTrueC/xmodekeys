@@ -25,12 +25,53 @@
 	)
 )
 
+(define (strcon-proc-delim listmaybe proc delim extraargs)
+	(letrec
+		(
+			(listyes (if (list? listmaybe) listmaybe (list listmaybe)))
+			(return (apply proc (cons (car listyes) extraargs)))
+		)
+
+		(for-each
+			(lambda (i)
+				(set! return (string-append return (string-append delim (apply proc (cons i extraargs)))))
+			)
+			(cdr listyes)
+		)
+		return
+	)
+)
+
+(define (announce)
+	(if (not (defined? 'NOTELL))
+		(run-command "/usr/bin/echo '' > /tmp/xmodekeys")
+	)
+)
+
+(define (unannounce)
+	(if (not (defined? 'NOTELL))
+		(run-command "/usr/bin/echo -ne '\\000' > /tmp/xmodekeys")
+	)
+)
+
+(define (writekeys)
+	(if (not (defined? 'NOTELL))
+		(let
+			(
+				(str (strcon-proc-delim INPSEQ strcon-proc-delim " " `(,symbol->string "+" ())))
+			)
+			(run-command (string-append "/usr/bin/echo '" (string-append str "' > /tmp/xmodekeys")))
+		)
+	)
+)
+
 (define (register-keys)
 	(for-each
 		(lambda (i)
 			(xbindkey-function i
 				(lambda ()
 					(set! INPSEQ (append INPSEQ (list i)))
+					(writekeys)
 					(xcheckseq)
 				)
 			)
@@ -67,6 +108,7 @@
 )
 
 (define (regmode)
+	(unannounce)
 	(remove-all-keys)
 	(ungrab-all-keys)
 
@@ -88,6 +130,7 @@
 (define (altmode)
 	(cond
 		((and (not ACTED) (not GOINGBACK))
+			(announce)
 			(remove-all-keys)
 			(ungrab-all-keys)
 
