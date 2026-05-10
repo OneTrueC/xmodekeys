@@ -25,7 +25,7 @@
 	)
 )
 
-(define (strcon-proc-delim listmaybe proc delim extraargs)
+(define (strcon-proc-delim listmaybe proc delim . extraargs)
 	(letrec
 		(
 			(listyes (if (list? listmaybe) listmaybe (list listmaybe)))
@@ -58,7 +58,7 @@
 	(if (not (defined? 'NOTELL))
 		(let
 			(
-				(str (strcon-proc-delim INPSEQ strcon-proc-delim " " `(,symbol->string "+" ())))
+				(str (strcon-proc-delim INPSEQ strcon-proc-delim " " symbol->string "+"))
 			)
 			(run-command (string-append "echo '" (string-append str "' > /tmp/xmodekeys")))
 		)
