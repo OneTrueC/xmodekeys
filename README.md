@@ -80,6 +80,10 @@ do) wish to use a modifier key as the key to switch between modes,
 This feature can be disabled by defining the `NOTELL` variable.
 
 The file /tmp/xmodekeys can be read to figure out the current state of
-xmodekeys, It contains a single NULL character when xmodekeys is in
-regular mode, and the current input sequence (keys separated by
-spaces, modifiers by plus signs) when in "modal" mode.
+xmodekeys, It contains the string `NORMAL` when xmodekeys is in regular
+mode, and the current input sequence (keys separated by spaces,
+modifiers by plus signs) when in "modal" mode.
+
+The "Telling" features requires the echo executable, which may be a
+limitation for those wishing to use xmodekeys on the most unorthodox
+setup ever conceived.

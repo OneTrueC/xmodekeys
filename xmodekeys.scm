@@ -44,13 +44,13 @@
 
 (define (announce)
 	(if (not (defined? 'NOTELL))
-		(run-command "/usr/bin/echo '' > /tmp/xmodekeys")
+		(run-command "echo '' > /tmp/xmodekeys")
 	)
 )
 
 (define (unannounce)
 	(if (not (defined? 'NOTELL))
-		(run-command "/usr/bin/echo -ne '\\000' > /tmp/xmodekeys")
+		(run-command "echo 'NORMAL' > /tmp/xmodekeys")
 	)
 )
 
@@ -60,7 +60,7 @@
 			(
 				(str (strcon-proc-delim INPSEQ strcon-proc-delim " " `(,symbol->string "+" ())))
 			)
-			(run-command (string-append "/usr/bin/echo '" (string-append str "' > /tmp/xmodekeys")))
+			(run-command (string-append "echo '" (string-append str "' > /tmp/xmodekeys")))
 		)
 	)
 )
