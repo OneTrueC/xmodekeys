@@ -17,7 +17,7 @@
 	(set! ALLSEQ (append ALLSEQ (list (cons keys command))))
 	(for-each
 		(lambda (i)
-			(if (not (memq i ALLKEY))
+			(if (not (member i ALLKEY))
 				(set! ALLKEY (append ALLKEY (list i)))
 			)
 		)
