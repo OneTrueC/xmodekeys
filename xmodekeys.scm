@@ -14,7 +14,7 @@
 )
 
 (define (xmodeseq keys command)
-	(set! ALLSEQ (append ALLSEQ (list (cons keys command))))
+	(set! ALLSEQ (append ALLSEQ (list keys command)))
 	(for-each
 		(lambda (i)
 			(if (not (member i ALLKEY))
@@ -81,24 +81,18 @@
 )
 
 (define (xcheckseq)
-	(for-each
-		(lambda (i)
-			(cond
-				((equal? (car i) INPSEQ)
-					; lisp is such a ridiculous language, not that i
-					; wouldn't have done the same thing in C (with some
-					; struct containing void* and char*, and a test
-					; against the NULLness of the two, but this is just
-					; ridiculous
-					(if (string? (cdr i))
-						(run-command (cdr i))
-						((cdr i))
+	(let ((bind (member INPSEQ ALLSEQ)))
+		(cond
+			((list? bind)
+				(let ((funcmand (car (cdr bind))))
+					(if (string? funcmand)
+						(run-command funcmand)
+						(funcmand)
 					)
 					(regmode)
 				)
 			)
 		)
-		ALLSEQ
 	)
 )
 
