@@ -1,5 +1,5 @@
-; it is necesary to define a press and a release bind because xbindkeys
-; counts modifier keys as includeing their own modifier on release, but
+; it is necessary to define a press and a release bind because xbindkeys
+; counts modifier keys as including their own modifier on release, but
 ; not on press (e.g.: Alt_L is pressed, but Alt+Alt_L is released).
 ; If you use something other than a modifier key for enabling modal
 ; mode, just set RELEASE equal to PRESS
@@ -21,4 +21,4 @@
 	(xmodeseq '(o t) "rxvt")
 )
 
-(load "/home/drew/Documents/xmodekeys/xmodekeys.scm")
+(load "/path/to/xmodekeys/xmodekeys.scm")

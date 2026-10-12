@@ -1,3 +1,8 @@
+# TODO
+
+update docs to latest commit (currently accurate only up to
+c3b1c8bd55674b825ab044012679a537d4626014)
+
 # xmodekeys
 
 **xmodekeys** is a scheme script that allows xbindkeys to have modal

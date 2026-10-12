@@ -14,7 +14,7 @@
 )
 
 (define (xmodeseq keys command)
-	(set! ALLSEQ (append ALLSEQ (list keys command)))
+	(set! ALLSEQ (append ALLSEQ (list (cons keys command))))
 	(for-each
 		(lambda (i)
 			(if (not (member i ALLKEY))
@@ -80,11 +80,43 @@
 	)
 )
 
+(define (subl l n)
+	(let ((ret '()) (i 0))
+		(for-each
+			(lambda (itr)
+				(cond
+					((< i n)
+						(set! i (+ i 1))
+						(set! ret (append ret (list itr)))
+					)
+				)
+			)
+			l
+		)
+		ret
+	)
+)
+
 (define (xcheckseq)
-	(let ((bind (member INPSEQ ALLSEQ)))
-		(cond
-			((list? bind)
-				(let ((funcmand (car (cdr bind))))
+	(set! CULL
+		(filter
+			(lambda (i)
+				(letrec
+					(
+						(seq (car i))
+						(len (if (< (length seq) (length INPSEQ)) (length seq) (length INPSEQ)))
+					)
+					(equal? (subl seq len) (subl INPSEQ len))
+				)
+			)
+			CULL
+		)
+	)
+
+	(cond
+		((= (length CULL) 1)
+			(if (equal? (car (car CULL)) INPSEQ)
+				(let ((funcmand (cdr (car CULL))))
 					(if (string? funcmand)
 						(run-command funcmand)
 						(funcmand)
@@ -93,12 +125,10 @@
 				)
 			)
 		)
+		((= (length CULL) 0)
+			(regmode)
+		)
 	)
-)
-
-(define (go-back)
-	(set! GOINGBACK #t)
-	(regmode)
 )
 
 (define (regmode)
@@ -109,10 +139,16 @@
 	(xbindkey-function PRESS
 		(lambda ()
 			(set! ACTED #f)
-			(set! GOINGBACK #f)
 		)
 	)
-	(xbindkey-function RELEASE altmode)
+	(xbindkey-function RELEASE
+		(lambda ()
+			(if (not FROMALT)
+				(altmode)
+				(set! FROMALT #f)
+			)
+		)
+	)
 
 	(if (defined? 'bindregkeys)
 		(bindregkeys)
@@ -123,18 +159,24 @@
 
 (define (altmode)
 	(cond
-		((and (not ACTED) (not GOINGBACK))
+		((not ACTED)
 			(announce)
 			(remove-all-keys)
 			(ungrab-all-keys)
 
-			; no clue why i have to do this but it doesn't work right if
-			; either is missing, feeling inclined to chock it up to
-			; xbindkeys being a little funky with presses and releases
-			; of modkeys
-			(xbindkey-function RELEASE go-back)
-			(xbindkey-function (cons 'Release PRESS) go-back)
+			; this is new directionwise but my idea here is that
+			; regmode will always be active while PRESS is pressed, but
+			; pressing and releasing PRESS when starting in altmode will
+			; still return to regmode
+			(xbindkey-function PRESS (lambda () (set! FROMALT #t) (regmode)))
 
+			; i think culling will be more efficient with larger sets
+			; of bindings because checking is only performed against the
+			; subset of all bindings that could match the eventual
+			; input sequence. it also allows for vim style returns to normal
+			; mode when there are no bindings that could possibly match
+			; the current input sequence
+			(set! CULL ALLSEQ)
 			(set! INPSEQ '())
 			(register-keys)
 
@@ -144,9 +186,10 @@
 )
 
 (define ACTED #f)
-(define GOINGBACK #f)
+(define FROMALT #f)
 (define INPSEQ '())
 (define ALLSEQ '())
+(define CULL '())
 (define ALLKEY '())
 
 (if (defined? 'bindmodesequences)
